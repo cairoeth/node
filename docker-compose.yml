@@ -6,16 +6,16 @@ services:
     ports:
       - "8545:8545"       # RPC
       - "8546:8546"       # websocket
-      - "7301:6060"       # metrics
+      - '9001:9001'       # metrics
       - "30303:30303"     # P2P TCP
       - "30303:30303/udp" # P2P UDP
     command: [ "bash", "./execution-entrypoint" ]
     volumes:
         - ${HOST_DATA_DIR}:/data
         - ./config:/chainconfig
+    # https://paradigmxyz.github.io/reth/run/troubleshooting.html#concurrent-database-access-error-using-containersdocker
+    pid: host
     env_file:
-      # select your network here:
-#      - .env.sepolia
      - .env.mainnet
   node:
     build:
@@ -29,29 +29,46 @@ services:
       - "6060:6060"     # pprof
     command: [ "bash", "./op-node-entrypoint" ]
     env_file:
-      # select your network here:
-#      - .env.sepolia
      - .env.mainnet
+
   prometheus:
-    image: prom/prometheus:latest
-    env_file:
-      - .env.mainnet
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
+    restart: unless-stopped
+    image: prom/prometheus
+    depends_on:
+      - reth
     ports:
       - 9090:9090
-  grafana:
-    image: grafana/grafana:9.3.0
-    env_file:
-      -  .env.mainnet
     volumes:
-      - ./grafana/provisioning/:/etc/grafana/provisioning/:ro
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
-      - grafana_data:/var/lib/grafana
+      - ./prometheus/:/etc/prometheus/
+      - prometheusdata:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+
+  grafana:
+    restart: unless-stopped
+    image: grafana/grafana:latest
+    depends_on:
+      - reth
+      - prometheus
     ports:
       - 3000:3000
+    environment:
+      PROMETHEUS_URL: http://prometheus:9090
+    volumes:
+      - grafanadata:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning_temp/dashboards
+    # 1. Copy dashboards from temp directory to prevent modifying original host files
+    # 2. Replace Prometheus datasource placeholder with the actual name
+    # 3. Run Grafana
+    entrypoint: >
+      sh -c "cp -r /etc/grafana/provisioning_temp/dashboards/. /etc/grafana/provisioning/dashboards &&
+             find /etc/grafana/provisioning/dashboards/ -name '*.json' -exec sed -i 's/$${DS_PROMETHEUS}/Prometheus/g' {} \+ &&
+             /run.sh"
 
 volumes:
-  prometheus_data:
-  grafana_data:
+  prometheusdata:
+    driver: local
+  grafanadata:
+    driver: local

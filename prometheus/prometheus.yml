@@ -1,11 +1,11 @@
-global:
-  scrape_interval:     15s
-  evaluation_interval: 15s
-
 scrape_configs:
-  - job_name: 'node'
+  - job_name: reth
+    metrics_path: "/"
+    scrape_interval: 5s
     static_configs:
-    - targets: ['node:7300']
-  - job_name: 'execution'
+      - targets: ['reth:9001', 'localhost:9001', 'host.docker.internal:9001']
+  - job_name: ethereum-metrics-exporter
+    metrics_path: "/metrics"
+    scrape_interval: 5s
     static_configs:
-    - targets: ['execution:6060']
+      - targets: ['metrics-exporter:9091']

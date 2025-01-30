@@ -43,8 +43,5 @@ WORKDIR /app
 
 COPY --from=op /app/op-node/bin/op-node ./
 COPY --from=reth /app/target/maxperf/op-reth ./
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./reth/reth-entrypoint ./execution-entrypoint
 COPY op-node-entrypoint .
-
-CMD ["/usr/bin/supervisord"]

@@ -1,0 +1,11 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+    - targets: ['node:7300']
+  - job_name: 'execution'
+    static_configs:
+    - targets: ['execution:7301']

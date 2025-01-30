@@ -21,8 +21,6 @@ services:
     build:
       context: .
       dockerfile: ${CLIENT}/Dockerfile
-    depends_on:
-      - execution
     ports:
       - "7545:8545"     # RPC
       - "9222:9222"     # P2P TCP
@@ -35,10 +33,7 @@ services:
 #      - .env.sepolia
      - .env.mainnet
   prometheus:
-    restart: unless-stopped
     image: prom/prometheus:latest
-    depends_on:
-      - execution
     env_file:
       - .env.mainnet
     volumes:
@@ -47,11 +42,7 @@ services:
     ports:
       - 9090:9090
   grafana:
-    restart: unless-stopped
     image: grafana/grafana:9.3.0
-    depends_on:
-      - execution
-      - prometheus
     env_file:
       -  .env.mainnet
     volumes:

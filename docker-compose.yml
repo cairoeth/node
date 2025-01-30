@@ -12,10 +12,11 @@ services:
     command: [ "bash", "./execution-entrypoint" ]
     volumes:
         - ${HOST_DATA_DIR}:/data
+        - ./config:/chainconfig
     env_file:
       # select your network here:
 #      - .env.sepolia
-#      - .env.mainnet
+     - .env.mainnet
   node:
     build:
       context: .
@@ -32,4 +33,4 @@ services:
     env_file:
       # select your network here:
 #      - .env.sepolia
-#      - .env.mainnet
+     - .env.mainnet

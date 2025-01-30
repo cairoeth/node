@@ -1,5 +1,5 @@
 services:
-  execution:
+  reth:
     build:
       context: .
       dockerfile: ${CLIENT}/Dockerfile

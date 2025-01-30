@@ -14,6 +14,8 @@ services:
         - ${HOST_DATA_DIR}:/data
         - ./config:/chainconfig
     env_file:
+      # select your network here:
+#      - .env.sepolia
      - .env.mainnet
   node:
     build:
@@ -27,6 +29,8 @@ services:
       - "6060:6060"     # pprof
     command: [ "bash", "./op-node-entrypoint" ]
     env_file:
+      # select your network here:
+#      - .env.sepolia
      - .env.mainnet
   prometheus:
     image: prom/prometheus:latest

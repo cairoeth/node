@@ -8,4 +8,4 @@ scrape_configs:
     - targets: ['node:7300']
   - job_name: 'execution'
     static_configs:
-    - targets: ['execution:6060']
+    - targets: ['execution:7301']

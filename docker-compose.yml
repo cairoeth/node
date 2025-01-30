@@ -9,6 +9,7 @@ services:
       - "7301:6060"       # metrics
       - "30303:30303"     # P2P TCP
       - "30303:30303/udp" # P2P UDP
+      - "8551:8551"       # auth rpc
     command: [ "bash", "./execution-entrypoint" ]
     volumes:
         - ${HOST_DATA_DIR}:/data

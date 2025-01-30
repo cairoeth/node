@@ -32,7 +32,8 @@ exec ./op-reth node \
   --authrpc.addr=0.0.0.0 \
   --authrpc.port="$AUTHRPC_PORT" \
   --authrpc.jwtsecret="$OP_NODE_L2_ENGINE_AUTH" \
-  --metrics=0.0.0.0:6060 \
+  --metrics=0.0.0.0:"$METRICS_PORT" \
   --chain "$RETH_CHAIN" \
+  --enable-discv5-discovery \
   --rollup.sequencer-http=$RETH_SEQUENCER_HTTP \
   --rollup.disable-tx-pool-gossip
